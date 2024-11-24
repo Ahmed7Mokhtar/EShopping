@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "5f68b8a1670d4a8b903f02c8",
+    "Name": "Product 1",
+    "Description": "Product 1 Desc",
+    "Price": 100,
+    "ImagePath": "images/products/product1.png",
+    "Summary": "Product 1 Summary",
+    "Type": {
+      "Id": "5f68b8a1670d4a8b903f02c9",
+      "Name": "Shoes"
+    },
+    "Brand": {
+      "Id": "5f68b8a1670d4a8b903f02c1",
+      "Name": "Addidas"
+    }
+  },
+  {
+    "Id": "5f68b8a1670d4a8b903f02cd",
+    "Name": "Product 2",
+    "Description": "Product 2 Desc",
+    "Price": 200,
+    "ImagePath": "images/products/product2.png",
+    "Summary": "Product 2 Summary",
+    "Type": {
+      "Id": "5f68b8a1670d4a8b903f02ca",
+      "Name": "Rockets"
+    },
+    "Brand": {
+      "Id": "5f68b8a1670d4a8b903f02c2",
+      "Name": "Puma"
+    }
+  },
+  {
+    "Id": "5f68b8a1670d4a8b903f02ce",
+    "Name": "Product 3",
+    "Description": "Product 3 Desc",
+    "Price": 300,
+    "ImagePath": "images/products/product3.png",
+    "Summary": "Product 3 Summary",
+    "Type": {
+      "Id": "5f68b8a1670d4a8b903f02cb",
+      "Name": "Football"
+    },
+    "Brand": {
+      "Id": "5f68b8a1670d4a8b903f02c3",
+      "Name": "Nike"
+    }
+  }
+]
