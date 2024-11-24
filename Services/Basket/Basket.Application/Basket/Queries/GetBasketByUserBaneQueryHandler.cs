@@ -10,24 +10,24 @@ using System.Threading.Tasks;
 
 namespace Basket.Application.Basket.Queries
 {
-    public class GetBasketByUserBaneQuery : IRequest<ShoppingCartDTO>
+    public class GetBasketByUserNameQuery : IRequest<ShoppingCartDTO>
     {
         public string UserName { get; set; }
-        public GetBasketByUserBaneQuery(string userName)
+        public GetBasketByUserNameQuery(string userName)
         {
             UserName = userName;
         }
     }
-    public class GetBasketByUserBaneQueryHandler : IRequestHandler<GetBasketByUserBaneQuery, ShoppingCartDTO>
+    public class GetBasketByUserNameQueryHandler : IRequestHandler<GetBasketByUserNameQuery, ShoppingCartDTO>
     {
         private readonly IBasketRepository _basketRepository;
 
-        public GetBasketByUserBaneQueryHandler(IBasketRepository basketRepository)
+        public GetBasketByUserNameQueryHandler(IBasketRepository basketRepository)
         {
             _basketRepository = basketRepository;
         }
 
-        public async Task<ShoppingCartDTO> Handle(GetBasketByUserBaneQuery request, CancellationToken cancellationToken)
+        public async Task<ShoppingCartDTO> Handle(GetBasketByUserNameQuery request, CancellationToken cancellationToken)
         {
             var cart = await _basketRepository.Get(request.UserName, cancellationToken);
             var result = CustomMapper.Mapper.Map<ShoppingCartDTO>(cart);

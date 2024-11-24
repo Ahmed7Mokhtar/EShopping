@@ -3,6 +3,7 @@ using Basket.Application.GrpcServices;
 using Basket.Core.Repositories;
 using Basket.Infrastructure.Repositories;
 using Discount.Grpc.Protos;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,12 +37,20 @@ builder.Services.AddSwaggerGen(opts =>
 });
 
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(typeof(GetBasketByUserBaneQueryHandler).Assembly));
+builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(typeof(GetBasketByUserNameQueryHandler).Assembly));
 
 // Redis
 builder.Services.AddStackExchangeRedisCache(opts =>
 {
     opts.Configuration = builder.Configuration.GetValue<string>("CacheSettings:ConnectionString");
+});
+
+builder.Services.AddMassTransit(cfg =>
+{
+    cfg.UsingRabbitMq((brc, brf) =>
+    {
+        brf.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+    });
 });
 
 var app = builder.Build();

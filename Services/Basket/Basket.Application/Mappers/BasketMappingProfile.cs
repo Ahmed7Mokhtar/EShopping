@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Basket.Application.DTOs;
 using Basket.Core.Entities;
+using EventBus.Messages.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Basket.Application.Mappers
             CreateMap<ShoppingCart, ShoppingCartDTO>().ReverseMap();
             CreateMap<ShoppingCartItem, ShoppingCartItemDTO>().ReverseMap();
             CreateMap<ShoppingCart, CreateShoppingCartDTO>().ReverseMap();
+            CreateMap<BasketCheckout, BasketCheckoutEvent>().ReverseMap();
         }
     }
 }

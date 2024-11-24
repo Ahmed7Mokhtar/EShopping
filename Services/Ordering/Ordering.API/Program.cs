@@ -1,3 +1,6 @@
+using EventBus.Messages.Common;
+using MassTransit;
+using Ordering.API.EventBusConsumer;
 using Ordering.API.Extensions;
 using Ordering.Application.Extensions;
 using Ordering.Infrastructure.Data;
@@ -11,6 +14,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddApplicationServices();  // App Services
 builder.Services.AddInfraServices(builder.Configuration);    // Infrastructure services
+//builder.Services.AddScoped<BasketOrderingConsumer>();
 
 builder.Services.AddApiVersioning(opt =>
 {
@@ -30,13 +34,27 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
+builder.Services.AddMassTransit(cfg =>
+{
+    // mark as consumer
+    cfg.AddConsumer<BasketOrderingConsumer>();
+    cfg.UsingRabbitMq((ctx, rbc) =>
+    {
+        rbc.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+        // provide the queue name with consumer settings
+        rbc.ReceiveEndpoint(EventBusConstant.BasketCheckoutQueue, c =>
+        {
+            c.ConfigureConsumer<BasketOrderingConsumer>(ctx);
+        });
+    });
+});
 
 var app = builder.Build();
 
-app.MigrateDatabase<OrderContext>((context, services) =>
+await app.MigrateDatabaseSync<OrderContext>(async (context, services) =>
 {
     var logger = services.GetRequiredService<ILogger<OrderContextSeed>>();
-    OrderContextSeed.SeedAsync(context, logger).Wait();
+    await OrderContextSeed.SeedAsync(context, logger);
 });
 
 // Configure the HTTP request pipeline.
