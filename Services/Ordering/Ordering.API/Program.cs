@@ -42,7 +42,7 @@ builder.Services.AddMassTransit(cfg =>
     {
         rbc.Host(builder.Configuration["EventBusSettings:HostAddress"]);
         // provide the queue name with consumer settings
-        rbc.ReceiveEndpoint(EventBusConstant.BasketCheckoutQueue, c =>
+        rbc.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, c =>
         {
             c.ConfigureConsumer<BasketOrderingConsumer>(ctx);
         });

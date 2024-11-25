@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Discount.Application.Mappers;
 using Discount.Core.Repositories;
 using Discount.Grpc.Protos;
 using Grpc.Core;
@@ -39,16 +40,7 @@ namespace Discount.Application.Queries
                 throw new RpcException(new Status(StatusCode.NotFound, $"Discount for product with Id: {request.ProductId} not found!"));
             }
 
-            //TODO: Fix mapping
-            //var result = _mapper.Map<CouponModel>(coupon);
-            var result = new CouponModel
-            {
-                Id = coupon.Id,
-                Amount = (long)coupon.Amount * 100,
-                Description = coupon.Description,
-                ProductId = coupon.ProductId,
-            };
-
+            var result = new DiscountMapper().Map(coupon);
             return result;
         }
     }
