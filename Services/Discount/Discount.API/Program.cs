@@ -1,12 +1,17 @@
+using Common.Logging;
 using Discount.API.Services;
 using Discount.Application.Queries;
 using Discount.Core.Repositories;
 using Discount.Infrastructure.Extensions;
 using Discount.Infrastructure.Repositories;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Serilog Config
+builder.Host.UseSerilog(Logging.ConfigureLogger);
 
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssembly(typeof(GetDiscountQueryHandler).Assembly));
