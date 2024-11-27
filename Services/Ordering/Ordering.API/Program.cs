@@ -42,7 +42,7 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddMassTransit(cfg =>
 {
     // mark as consumer
-    cfg.AddConsumer<BasketOrderingConsumer>();
+    cfg.AddConsumersFromNamespaceContaining<BasketOrderingConsumer>();
     cfg.UsingRabbitMq((ctx, rbc) =>
     {
         rbc.Host(builder.Configuration["EventBusSettings:HostAddress"]);
@@ -50,6 +50,11 @@ builder.Services.AddMassTransit(cfg =>
         rbc.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, c =>
         {
             c.ConfigureConsumer<BasketOrderingConsumer>(ctx);
+        });
+        // V2
+        rbc.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueueV2, c =>
+        {
+            c.ConfigureConsumer<BasketOrderingConsumerV2>(ctx);
         });
     });
 });

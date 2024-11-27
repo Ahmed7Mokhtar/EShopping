@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Basket.Application.Basket.Queries;
 using Basket.Application.GrpcServices;
 using Basket.Core.Repositories;
@@ -6,6 +7,8 @@ using Common.Logging;
 using Discount.Grpc.Protos;
 using MassTransit;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,14 +26,19 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
     cfg.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]);
 });
 
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddApiVersioning(opts =>
 {
     opts.ReportApiVersions = true;
     opts.AssumeDefaultVersionWhenUnspecified = true;
     opts.DefaultApiVersion = new Asp.Versioning.ApiVersion(1, 0);
+})
+.AddApiExplorer(opts =>
+{
+    opts.GroupNameFormat = "'v'VVV";
+    opts.SubstituteApiVersionInUrl = true;
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opts =>
 {
@@ -38,6 +46,38 @@ builder.Services.AddSwaggerGen(opts =>
     {
         Title = "Basket.API",
         Version = "v1"
+    });
+    opts.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Basket.API",
+        Version = "v2"
+    });
+
+    // Include XML comments
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if(File.Exists(xmlPath))
+    {
+        opts.IncludeXmlComments(xmlPath);
+    }
+
+    // Configure swagger to use versioning
+    opts.DocInclusionPredicate((version, apiDescription) =>
+    {
+        if(!apiDescription.TryGetMethodInfo(out var methodInfo))
+            return false;
+
+        var versions = methodInfo.DeclaringType?
+            .GetCustomAttributes(true)
+            .OfType<ApiVersionAttribute>()
+            .SelectMany(att => att.Versions)
+            .Union(
+                methodInfo.DeclaringType?.BaseType?
+                .GetCustomAttributes(true)
+                .OfType<ApiVersionAttribute>()
+                .SelectMany(att => att.Versions) ?? Enumerable.Empty<ApiVersion>());
+
+        return versions?.Any(v => $"v{v.ToString()}" == version) ?? false;
     });
 });
 
@@ -65,7 +105,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(cfg =>
+    {
+        cfg.SwaggerEndpoint("/swagger/v1/swagger.json", "Basket.API V1");
+        cfg.SwaggerEndpoint("/swagger/v2/swagger.json", "Basket.API V2");
+    });
 }
 
 app.UseAuthorization();

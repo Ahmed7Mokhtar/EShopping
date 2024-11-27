@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Catalog.Core.Shared
+namespace Ordering.Core.Shared
 {
     public abstract class BaseCommand
     {

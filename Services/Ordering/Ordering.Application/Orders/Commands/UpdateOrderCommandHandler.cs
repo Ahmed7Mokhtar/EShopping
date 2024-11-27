@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Catalog.Core.Shared;
+using Ordering.Core.Shared;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Ordering.Application.DTOs;
